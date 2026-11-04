@@ -1,0 +1,7 @@
+node_modules/
+build/
+*.log
+
+# Istruzioni per gli assistenti: fuori dal repo pubblico.
+CLAUDE.md
+CLAUDE.local.md

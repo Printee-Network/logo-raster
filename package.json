@@ -1,0 +1,36 @@
+{
+  "name": "@printee-network/logo-raster",
+  "version": "0.1.0",
+  "description": "Il logo caricato da chi personalizza un prodotto diventa il PNG dell'anteprima: raster, SVG, PDF e AI, con lo sfondo bianco disegnato che si può togliere. Solo browser.",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "bin": {
+    "copia-worker-pdf": "./bin/copia-worker-pdf.mjs"
+  },
+  "files": [
+    "build",
+    "bin"
+  ],
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "peerDependencies": {
+    "pdfjs-dist": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "pdfjs-dist": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.4",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.10",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.3"
+  }
+}
