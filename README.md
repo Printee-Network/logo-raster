@@ -21,7 +21,7 @@ const [stato, setStato] = useState<LogoCaricato | null>(null);
 
 const logo = await creaLogoRaster(file, {
   latoLungo: 2000,
-  pdf: { caricaPdfjs: () => import("pdfjs-dist"), worker: "/pdf.worker.min.mjs" },
+  pdf: { caricaPdfjs: () => import("pdfjs-dist/legacy/build/pdf.mjs"), worker: "/pdf.worker.min.mjs" },
 });
 setStato((attuale) => sostituisciLogo(attuale, logo));
 
@@ -33,7 +33,9 @@ const daMostrare = logoInUso(stato);
 ```
 
 Senza l'opzione `pdf` i PDF falliscono con un messaggio che chiede un'immagine. Con `pdf`, l'app
-installa `pdfjs-dist` e copia il worker in `public/` dal suo `postinstall`:
+installa `pdfjs-dist` e copia il worker in `public/` dal suo `postinstall`. Si usa la build `legacy` di
+pdf.js, perché quella normale funziona solo sulle ultime versioni dei browser; il comando copia il worker
+della stessa build:
 
 ```json
 "postinstall": "copia-worker-pdf"

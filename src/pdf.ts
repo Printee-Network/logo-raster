@@ -50,7 +50,7 @@ type PaginaPdf = {
 };
 
 export type OpzioniPdf = {
-  /** Es. `() => import("pdfjs-dist")`. */
+  /** Es. `() => import("pdfjs-dist/legacy/build/pdf.mjs")`, la build che regge i browser non recentissimi. */
   caricaPdfjs: () => Promise<Pdfjs>;
   /**
    * Percorso assoluto del worker servito dall'app (es. `/pdf.worker.min.mjs`, copiato in `public/` dal
