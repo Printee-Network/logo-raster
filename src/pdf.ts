@@ -24,13 +24,15 @@ import { ErroreLogo } from "./errori";
 /** La parte di pdf.js che serve qui. Il modulo `pdfjs-dist` la soddisfa così com'è. */
 export type Pdfjs = {
   GlobalWorkerOptions: { workerSrc: string };
-  getDocument(sorgente: { data: ArrayBuffer }): { promise: Promise<DocumentoPdf> };
+  getDocument(sorgente: { data: ArrayBuffer }): {
+    promise: Promise<DocumentoPdf>;
+    destroy(): Promise<void>;
+  };
 };
 
 type DocumentoPdf = {
   numPages: number;
   getPage(numero: number): Promise<PaginaPdf>;
-  destroy(): Promise<void>;
 };
 
 type VistaPdf = { width: number; height: number };
@@ -40,7 +42,9 @@ type PaginaPdf = {
   render(parametri: {
     canvas: HTMLCanvasElement;
     canvasContext: CanvasRenderingContext2D;
-    viewport: VistaPdf;
+    // È la vista avuta da `getViewport`: il suo tipo vero lo dichiara pdf.js e cambia fra le versioni.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    viewport: any;
     background: string;
   }): { promise: Promise<unknown> };
 };
@@ -84,11 +88,10 @@ export async function disegnaPdf(
   const pdfjs = await caricaPdfjs();
   pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
-  const documento = await pdfjs
-    .getDocument({ data: await file.arrayBuffer() })
-    .promise.catch((errore: unknown) => {
-      throw erroreDelFile(errore);
-    });
+  const caricamento = pdfjs.getDocument({ data: await file.arrayBuffer() });
+  const documento = await caricamento.promise.catch((errore: unknown) => {
+    throw erroreDelFile(errore);
+  });
   try {
     if (documento.numPages === 0) throw new ErroreLogo("Il file non contiene pagine.");
     const pagina = await documento.getPage(1);
@@ -111,6 +114,6 @@ export async function disegnaPdf(
   } finally {
     // Il canvas è già dipinto: il documento nel worker non serve più. Se la chiusura fallisce non
     // deve coprire l'errore vero né far fallire un disegno riuscito.
-    await documento.destroy().catch(() => undefined);
+    await caricamento.destroy().catch(() => undefined);
   }
 }
